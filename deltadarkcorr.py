@@ -24,8 +24,17 @@ def getdarkcorrimg(original,refdir='/store/skysurf/',rawloc='find'):
     realdark=sigma_clipped_stats(fdrk['SCI'].data[wd])[0]*2.5/fdrk[0].header['EXPTIME']
     moddark=darkmodel2.darkmodelfile(original,rwloc+root+'_raw.fits')
 
+    if flt['SCI'].data.shape[0]<1014:
+        offsety,offsetx=-int(f[1].header['LTV1'])+5,-int(f[1].header['LTV2'])+5
+        ffltdat=fflt['SCI'].data[offsetx:-offsetx,offsety:-offsety]
+        dfltdat=dflt['SCI'].data[offsetx:-offsetx,offsety:-offsety]
+        drkdat=fdrk['SCI'].data[offsetx:-offsetx,offsety:-offsety]
+    else:
+        ffltdat=fflt['SCI'].data[5:-5,5:-5]
+        dfltdat=dflt['SCI'].data[5:-5,5:-5]
+        drkdat=fdrk['SCI'].data[5:-5,5:-5]
 
-    newimg=flt['SCI'].data-2.5/fflt['SCI'].data[5:-5,5:-5]/dflt['SCI'].data[5:-5,5:-5]*fdrk['SCI'].data[5:-5,5:-5]/fdrk[0].header['EXPTIME']*(1-moddark/realdark)
+    newimg=flt['SCI'].data-2.5/ffltdat/dfltdat*drkdat/fdrk[0].header['EXPTIME']*(1-moddark/realdark)
 
     newflt=copy.copy(flt)
     newflt['SCI'].data=newimg
