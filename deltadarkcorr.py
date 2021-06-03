@@ -25,14 +25,14 @@ def getdarkcorrimg(original,refdir='/store/skysurf/',rawloc='find'):
     moddark=darkmodel2.darkmodelfile(original,rwloc+root+'_raw.fits')
 
     if flt['SCI'].data.shape[0]<1014:
-        offsety,offsetx=-int(f[1].header['LTV1'])+5,-int(f[1].header['LTV2'])+5
+        offsety,offsetx=-int(flt[1].header['LTV1'])+5,-int(flt[1].header['LTV2'])+5
         ffltdat=fflt['SCI'].data[offsetx:-offsetx,offsety:-offsety]
         dfltdat=dflt['SCI'].data[offsetx:-offsetx,offsety:-offsety]
-        drkdat=fdrk['SCI'].data[offsetx:-offsetx,offsety:-offsety]
     else:
         ffltdat=fflt['SCI'].data[5:-5,5:-5]
         dfltdat=dflt['SCI'].data[5:-5,5:-5]
-        drkdat=fdrk['SCI'].data[5:-5,5:-5]
+        
+    drkdat=fdrk['SCI'].data[5:-5,5:-5]
 
     newimg=flt['SCI'].data-2.5/ffltdat/dfltdat*drkdat/fdrk[0].header['EXPTIME']*(1-moddark/realdark)
 
