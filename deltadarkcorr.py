@@ -27,7 +27,7 @@ def getdarkcorrimg(original,refdir='/store/skysurf/',rawloc='find'):
         dflt=fits.open(refdir+'crds_cache/references/hst/wfc3/'+flt[0].header['DFLTFILE'].split('$')[-1])
         dfltdata=dflt['SCI'].data
     else:
-        dfltdata=np.ones_like(fflt['SCI'].data)
+        dfltdata=np.ones_like(ffltdata)
 
     if rawloc=='find':
         yr=flt[0].header['DATE-OBS'].split('-')[0]
