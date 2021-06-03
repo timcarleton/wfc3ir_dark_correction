@@ -10,7 +10,11 @@ def getdarkcorrimg(original,refdir='/store/skysurf/',rawloc='find'):
 
     fdrk=fits.open(refdir+'crds_cache/references/hst/wfc3/'+flt[0].header['DARKFILE'].split('$')[-1])
     fflt=fits.open(refdir+'crds_cache/references/hst/wfc3/'+flt[0].header['PFLTFILE'].split('$')[-1])
-    dflt=fits.open(refdir+'crds_cache/references/hst/wfc3/'+flt[0].header['DFLTFILE'].split('$')[-1])
+    if 'N/A' not in flt[0].header['DFLTFILE']:
+        dflt=fits.open(refdir+'crds_cache/references/hst/wfc3/'+flt[0].header['DFLTFILE'].split('$')[-1])
+        dfltdata=dflt['SCI'].data
+    else:
+        dfltdata=np.ones_like(fflt['SCI'].data)
 
     if rawloc=='find':
         yr=flt[0].header['DATE-OBS'].split('-')[0]
@@ -27,10 +31,10 @@ def getdarkcorrimg(original,refdir='/store/skysurf/',rawloc='find'):
     if flt['SCI'].data.shape[0]<1014:
         offsety,offsetx=-int(flt[1].header['LTV1'])+5,-int(flt[1].header['LTV2'])+5
         ffltdat=fflt['SCI'].data[offsetx:-offsetx,offsety:-offsety]
-        dfltdat=dflt['SCI'].data[offsetx:-offsetx,offsety:-offsety]
+        dfltdat=dfltdata[offsetx:-offsetx,offsety:-offsety]
     else:
         ffltdat=fflt['SCI'].data[5:-5,5:-5]
-        dfltdat=dflt['SCI'].data[5:-5,5:-5]
+        dfltdat=dfltdata[5:-5,5:-5]
         
     drkdat=fdrk['SCI'].data[5:-5,5:-5]
 
