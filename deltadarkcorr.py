@@ -14,7 +14,7 @@ def getdarkcorrimg(original,refdir='/store/skysurf/',rawloc='find'):
 
     if rawloc=='find':
         yr=flt[0].header['DATE-OBS'].split('-')[0]
-        rwloc='/media/WD10TB_cl1/skysurf/wfc3ir_rw/F125W/'+yr+'/'
+        rwloc='/media/WD10TB_cl1/skysurf/wfc3ir_rw/'+flt[0].header['FILTER']+'/'+yr+'/'
     else:
         rwloc=rawloc
         
