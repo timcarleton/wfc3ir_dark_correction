@@ -44,7 +44,6 @@ def getdarkcorrimg(original,refdir='/store/skysurf/',rawloc='find'):
     if flt['SCI'].data.shape[0]<1014:
         if 'N/A' not in flt[0].header['PFLTFILE']:
             offsety,offsetx=-int(flt[1].header['LTV1'])+5,-int(flt[1].header['LTV2'])+5
-            print(ffltdata.shape)
             ffltdat=ffltdata[offsetx:-offsetx,offsety:-offsety]
             dfltdat=dfltdata[offsetx:-offsetx,offsety:-offsety]
         else:
@@ -60,7 +59,8 @@ def getdarkcorrimg(original,refdir='/store/skysurf/',rawloc='find'):
         
     drkdat=fdrk['SCI'].data[5:-5,5:-5]
 
-    newimg=flt['SCI'].data-2.5/ffltdat/dfltdat*drkdat/fdrk[0].header['EXPTIME']*(1-moddark/realdark)
+    print(np.median(drkdat),fdrk[0].header['EXPTIME'],moddark,realdark)
+    newimg=flt['SCI'].data+2.5/ffltdat/dfltdat*drkdat/fdrk[0].header['EXPTIME']*(1-moddark/realdark)
 
     newflt=copy.copy(flt)
     newflt['SCI'].data=newimg
