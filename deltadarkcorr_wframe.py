@@ -4,8 +4,10 @@ from astropy.stats import sigma_clipped_stats
 import darkmodel2
 import copy
 import matplotlib.pyplot as plt
+import getstructmodel
+import matplotlib.pyplot as plt
 
-def getdarkcorrimg(original,refdir='/store/skysurf/',rawloc='find'):
+def getdarkcorrimg(original,refdir='/store/skysurf/',rawloc='find',structmodel=False):
 
     flt=fits.open(original)
 
@@ -60,13 +62,19 @@ def getdarkcorrimg(original,refdir='/store/skysurf/',rawloc='find'):
         
     drk0=fdrk['SCI'].data[5:-5,5:-5]
 
-    drkint=fits.open('/store/skysurf/reference/int_'+flt[0].header['SAMP_SEQ']+'.fits')
-    drkm=fits.open('/store/skysurf/reference/slope_'+flt[0].header['SAMP_SEQ']+'.fits')
+    if structmodel:
+        drkdat=getstructmodel.getstructmodel(original,rwloc+root+'_raw.fits')/2.5
+        
+    else:
+        drkint=fits.open('/store/skysurf/reference/int1_'+flt[0].header['SAMP_SEQ']+'.fits')
+        drkm=fits.open('/store/skysurf/reference/slope1_'+flt[0].header['SAMP_SEQ']+'.fits')
 
-    drkdat=drkm[0].data*moddark+drkint[0].data
+        drkdat=drkm[0].data*moddark/2.5+drkint[0].data
 
-    newimg=flt['SCI'].data+(drk0*2.5/fdrk[0].header['EXPTIME']-drkdat)/ffltdat/dfltdat
+    #newimg=flt['SCI'].data+(drk0*2.5/fdrk[0].header['EXPTIME']-drkdat*2.5)/ffltdat/dfltdat
+    newimg=flt['SCI'].data+(drk0*2.5/fdrk[0].header['EXPTIME']-drkdat*2.5)
     #newimg=flt['SCI'].data+2.5/ffltdat/dfltdat*drkdat/fdrk[0].header['EXPTIME']*(1-moddark/realdark)
+
 
     #newimg = flt['SCI'].data + (epsilon)*dark_frame # find epsilon to minimize quadrant differences
     newflt=copy.copy(flt)
